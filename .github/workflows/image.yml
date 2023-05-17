@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag strat_service:$(date +%s)
+        run: docker build . --file Dockerfile --tag gateway_service:$(date +%s)
 
       - name: Publish to Docker Hub 
         uses: docker/build-push-action@v1
