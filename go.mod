@@ -1,4 +1,4 @@
-module GatewayService
+module github.com/Kibuns/GatewayService
 
 go 1.20
 

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gatewayservice-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gatewayservice
+  template:
+    metadata:
+      labels:
+        app: gatewayservice
+    spec:
+      containers:
+        - name: gatewayservice
+          image: ninoverhaegh/gatewayservice:latest
+          ports:
+            - containerPort: 8079
