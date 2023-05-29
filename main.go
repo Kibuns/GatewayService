@@ -52,7 +52,7 @@ func searchHomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Make a request to Service 1
 	resp, err := http.Get(searchServiceURL)
 	if err != nil {
-		http.Error(w, "Error calling Service 1", http.StatusInternalServerError)
+		http.Error(w, "Error calling search service", http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
@@ -76,7 +76,7 @@ func twootHomeHandler(w http.ResponseWriter, r *http.Request) {
 	// resp, err := http.Get("http://localhost:10000")
 	resp, err := http.Get(twootServiceURL)
 	if err != nil {
-		http.Error(w, "Error calling Service 1", http.StatusInternalServerError)
+		http.Error(w, "Error calling twoot service", http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
