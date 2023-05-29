@@ -13,13 +13,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const twootServiceURL = "http://twoot-service.default.svc.cluster.local:10000";
+const searchServiceURL = "http://search-service.default.svc.cluster.local:9999";
+const userServiceURL = "http://user-service.default.svc.cluster.local:9998";
+const authServiceURL = "http://auth-service.default.svc.cluster.local:3500";
+
+
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the query parameter from the URL
 	vars := mux.Vars(r)
 	query := vars["query"]
 
 	// Make a GET request to Service2 with the query parameter
-	resp, err := http.Get("http://localhost:9999/search/" + query)
+	resp, err := http.Get(searchServiceURL + "/search/" + query)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -44,7 +50,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 func searchHomeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("search home")
 	// Make a request to Service 1
-	resp, err := http.Get("http://localhost:9999")
+	resp, err := http.Get(searchServiceURL)
 	if err != nil {
 		http.Error(w, "Error calling Service 1", http.StatusInternalServerError)
 		return
@@ -68,7 +74,7 @@ func searchHomeHandler(w http.ResponseWriter, r *http.Request) {
 func twootHomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Make a request to Service 1
 	// resp, err := http.Get("http://localhost:10000")
-	resp, err := http.Get("http://twoot-service.default.svc.cluster.local:10000")
+	resp, err := http.Get(twootServiceURL)
 	if err != nil {
 		http.Error(w, "Error calling Service 1", http.StatusInternalServerError)
 		return
@@ -104,7 +110,7 @@ func storeTwootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Clone the incoming request
-	newReq, err := http.NewRequest("GET", "http://localhost:3500/getusername", nil)
+	newReq, err := http.NewRequest("GET", authServiceURL + "/getusername", nil)
 	if err != nil {
 		http.Error(w, "Failed to create new request", http.StatusInternalServerError)
 		fmt.Println(err)
@@ -159,7 +165,7 @@ func storeTwootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Make a POST request to Service1 with the twoot payload
-	resp, err = http.Post("http://localhost:10000/create", "application/json", bytes.NewBuffer(payload))
+	resp, err = http.Post(twootServiceURL + "/create", "application/json", bytes.NewBuffer(payload))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -182,7 +188,7 @@ func storeTwootHandler(w http.ResponseWriter, r *http.Request) {
 
 func createUserHandler(w http.ResponseWriter, r *http.Request){
 		// Make a POST request to Service1 with the request body
-		resp, err := http.Post("http://localhost:9998/create", "application/json", r.Body)
+		resp, err := http.Post(userServiceURL + "/create", "application/json", r.Body)
 		if err != nil {
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
 			return
@@ -205,7 +211,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request){
 
 func getJWTHandler(w http.ResponseWriter, r *http.Request) {
 	// Make a POST request to Service1 with the request body
-	resp, err := http.Post("http://localhost:3500/jwt", "application/json", r.Body)
+	resp, err := http.Post(authServiceURL + "/jwt", "application/json", r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
