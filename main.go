@@ -67,7 +67,8 @@ func searchHomeHandler(w http.ResponseWriter, r *http.Request) {
 
 func twootHomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Make a request to Service 1
-	resp, err := http.Get("http://localhost:10000")
+	// resp, err := http.Get("http://localhost:10000")
+	resp, err := http.Get("http://twoot-service.default.svc.cluster.local:10000")
 	if err != nil {
 		http.Error(w, "Error calling Service 1", http.StatusInternalServerError)
 		return
