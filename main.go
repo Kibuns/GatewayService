@@ -19,6 +19,11 @@ const userServiceURL = "http://user-service.default.svc.cluster.local:9998";
 const authServiceURL = "http://auth-service.default.svc.cluster.local:3500";
 
 
+func homePage(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the HomePage of the Gateway Service!")
+	fmt.Println("Endpoint Hit: gateway")
+}
+
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the query parameter from the URL
 	vars := mux.Vars(r)
@@ -239,6 +244,7 @@ func main() {
 	// server.Use(CORS)
 
     // Route requests to the appropriate handler function based on the URL path
+	server.HandleFunc("/", homePage)
     server.HandleFunc("/search", searchHomeHandler)
 	server.HandleFunc("/search/{query}", searchHandler)
     server.HandleFunc("/twoot", twootHomeHandler)
