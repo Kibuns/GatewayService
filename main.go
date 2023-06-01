@@ -16,7 +16,7 @@ import (
 const twootServiceURL = "http://twoot-service.default.svc.cluster.local:10000";
 const searchServiceURL = "http://search-service.default.svc.cluster.local:9999";
 const userServiceURL = "http://user-service.default.svc.cluster.local:9998";
-const authServiceURL = "http://authservice.default.svc.cluster.local:8083";
+const authServiceURL = "http://10.0.202.203:8083";
 
 
 func homePage(w http.ResponseWriter, r *http.Request) {
