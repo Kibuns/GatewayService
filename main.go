@@ -13,9 +13,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const twootServiceURL = "http://twoot-service.default.svc.cluster.local:10000";
-const searchServiceURL = "http://search-service.default.svc.cluster.local:9999";
-const userServiceURL = "http://user-service.default.svc.cluster.local:9998";
+const twootServiceURL = "http://twootservice:10000";
+const searchServiceURL = "http://searchservice:8081";
+const userServiceURL = "http://userservice:9998";
 const authServiceURL = "http://authservice:8083";
 
 
