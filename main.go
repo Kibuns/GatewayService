@@ -13,10 +13,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const twootServiceURL = "http://twootservice:10000";
-const searchServiceURL = "http://searchservice:8081";
-const userServiceURL = "http://userservice:9998";
-const authServiceURL = "http://authservice:8083";
+const (
+	twootServiceURL = "http://twootservice:10000";
+	searchServiceURL = "http://searchservice:8081";
+	userServiceURL = "http://userservice:9998";
+	authServiceURL = "http://authservice:8083";
+)
 
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -237,6 +239,20 @@ func getJWTHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func deleteAllOfUser(w http.ResponseWriter, r *http.Request){
+	// Extract the query parameter from the URL
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+
+    // Publish the event to RabbitMQ
+    send(username)
+
+	fmt.Fprintf(w, "Sent message to delete user: " + username)
+
+
+}
+
 func main() {
     // Create a new HTTP server
     server := mux.NewRouter().StrictSlash(true)
@@ -247,6 +263,7 @@ func main() {
 	server.HandleFunc("/", homePage)
     server.HandleFunc("/search", searchHomeHandler)
 	server.HandleFunc("/search/{query}", searchHandler)
+	server.HandleFunc("/delete/{username}", deleteAllOfUser)
     server.HandleFunc("/twoot", twootHomeHandler)
 	server.HandleFunc("/twoot/post", storeTwootHandler)
 	server.HandleFunc("/user/create", createUserHandler)
@@ -259,6 +276,7 @@ func main() {
 
 	
 }
+
 
 // func CORS(next http.Handler) http.Handler {
 // 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
