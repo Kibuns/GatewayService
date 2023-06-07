@@ -14,11 +14,5 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Checkout source code
-        uses: actions/checkout@v2
-
-      - name: Deploy with yaml from master
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            kubectl apply -f https://raw.githubusercontent.com/Kibuns/GatewayService/master/deployment.yaml
+      - run: |
+          kubectl apply -f https://raw.githubusercontent.com/Kibuns/GatewayService/master/deployment.yaml
