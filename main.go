@@ -239,7 +239,7 @@ func getJWTHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func deleteAllOfUser(w http.ResponseWriter, r *http.Request){
+func deleteAllOfUser(w http.ResponseWriter, r *http.Request) {
 	// Extract the query parameter from the URL
 	vars := mux.Vars(r)
 	username := vars["username"]
@@ -249,8 +249,55 @@ func deleteAllOfUser(w http.ResponseWriter, r *http.Request){
     send(username)
 
 	fmt.Fprintf(w, "Sent message to delete user: " + username)
+}
 
+func getAllOfUser(w http.ResponseWriter, r *http.Request) {
+	// Extract the query parameter from the URL
+	vars := mux.Vars(r)
+	username := vars["username"]
 
+	twootResp, err := http.Get(twootServiceURL + "/getall/" + username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer twootResp.Body.Close()
+
+	userResp, err := http.Get(userServiceURL + "/get/" + username)
+	if err != nil {
+		http.Error(w, "user not found", http.StatusInternalServerError)
+		return
+	}
+	defer userResp.Body.Close()
+
+	var twoots []Models.Twoot
+	var user Models.User
+
+	err = json.NewDecoder(twootResp.Body).Decode(&twoots)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewDecoder(userResp.Body).Decode(&user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	type CombinedResponse struct {
+		Twoots []Models.Twoot `json:"twoots"`
+		User   Models.User    `json:"user"`
+	}
+
+	combinedResponse := CombinedResponse{
+		Twoots: twoots,
+		User:   user,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(combinedResponse)
 }
 
 func main() {
@@ -264,10 +311,12 @@ func main() {
     server.HandleFunc("/search", searchHomeHandler)
 	server.HandleFunc("/search/{query}", searchHandler)
 	server.HandleFunc("/delete/{username}", deleteAllOfUser)
+	server.HandleFunc("/getall/{username}", getAllOfUser)
     server.HandleFunc("/twoot", twootHomeHandler)
 	server.HandleFunc("/twoot/post", storeTwootHandler)
 	server.HandleFunc("/user/create", createUserHandler)
 	server.HandleFunc("/jwt", getJWTHandler)
+
 
 
     // Start the HTTP server on port 8080
