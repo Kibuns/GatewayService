@@ -193,27 +193,57 @@ func storeTwootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func createUserHandler(w http.ResponseWriter, r *http.Request){
-		// Make a POST request to Service1 with the request body
-		resp, err := http.Post(userServiceURL + "/create", "application/json", r.Body)
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+	// Read the request body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Could not read request body", http.StatusInternalServerError)
+		return
+	}
+	defer r.Body.Close()
+
+	// Define a struct to unmarshal the request body
+	type UserRequest struct {
+		PermissionToSave bool `json:"permissionToSave"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+
+	var userReq UserRequest
+	if err := json.Unmarshal(body, &userReq); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Check the value of "permissionToSave" field
+	if userReq.PermissionToSave {
+		// The value of "permissionToSave" is true
+		// Make the POST request to Service1
+		resp, err := http.Post(userServiceURL+"/create", "application/json", bytes.NewReader(body))
 		if err != nil {
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
 			return
 		}
 		defer resp.Body.Close()
-	
+
 		// Copy the response headers from Service1 to the gateway response
 		for k, v := range resp.Header {
 			w.Header().Set(k, v[0])
 		}
-	
+
 		// Copy the status code from Service1 to the gateway response
 		w.WriteHeader(resp.StatusCode)
-	
+
 		// Copy the response body from Service1 to the gateway response
 		if _, err := io.Copy(w, resp.Body); err != nil {
 			log.Println(err)
 		}
+	} else {
+		// The value of "permissionToSave" is not true
+		// Handle the case when permission is not granted
+		http.Error(w, "Permission not granted to save", http.StatusForbidden)
+	}
 }
 
 func getJWTHandler(w http.ResponseWriter, r *http.Request) {
