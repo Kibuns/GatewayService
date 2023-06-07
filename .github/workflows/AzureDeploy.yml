@@ -1,4 +1,4 @@
-name: AzureDeploy
+name: AzureDeployy
 
 on:
   push:
