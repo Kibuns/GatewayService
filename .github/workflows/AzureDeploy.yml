@@ -5,14 +5,21 @@ on:
     branches: ["master"]
 
 jobs:
-    deploy:
-      runs-on: ubuntu-latest
-      steps:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
 
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - run: |
-          kubectl apply -f https://raw.githubusercontent.com/Kibuns/GatewayService/master/deployment.yaml
+    - name: Set Azure Subscription
+      run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get AKS Cluster Credentials
+      run: az aks get-credentials --resource-group TwotterResources --name TwotterCluster
+    
+    - name: Apply deployment.yaml
+    - run: |
+        kubectl apply -f https://raw.githubusercontent.com/Kibuns/GatewayService/master/deployment.yaml
