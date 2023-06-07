@@ -16,4 +16,4 @@ jobs:
     - run: |
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         az aks get-credentials --resource-group TwotterResources --name TwotterCluster
-        kubectl apply -f https://raw.githubusercontent.com/Kibuns/GatewayService/master/deployment.yaml
+        kubectl apply -f https://raw.githubusercontent.com/Kibuns/GatewayService/master/deployment.yaml --force
