@@ -27,7 +27,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
-	// Extract the query parameter from the URL
+	// Extract the query parameter from the URL!
 	vars := mux.Vars(r)
 	query := vars["query"]
 
